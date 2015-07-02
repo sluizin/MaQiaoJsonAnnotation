@@ -2,10 +2,14 @@ package testMQAnnotation;
 
 import java.io.IOException;
 import java.util.LinkedList;
+
+//import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+
 import MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation;
 import MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation.MQvisit;
 
+//import com.alibaba.fastjson.JSON;
 
 @SuppressWarnings("unused")
 public class testannotation {

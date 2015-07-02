@@ -14,6 +14,8 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.esotericsoftware.reflectasm.MethodAccess;
+
 import MaQiao.Constants.Constants;
 import MaQiao.Constants.UNSAFEcommon;
 //import org.objectweb.asm.tree.AnnotationNode;
@@ -26,10 +28,11 @@ import MaQiao.Constants.UNSAFEcommon;
  * @serial 1.7
  * @author Sunjian
  */
-public final class asmMQAnnotation{
+public final class asmMQAnnotation {
 	transient int identityHashCode = 0;
 	transient String className = null;
 	transient Class<?> classN = null;
+	transient MethodAccess access = null;
 	transient LinkedList<MQvisit> MQjsonList = new LinkedList<MQvisit>();
 
 	public final LinkedList<MQvisit> getMQjsonLinkedList() {
@@ -37,14 +40,16 @@ public final class asmMQAnnotation{
 	}
 
 	public final MQvisit[] getMQjsonArray() {
-		if(MQjsonList==null)return new MQvisit[0];
+		if (MQjsonList == null) return new MQvisit[0];
 		final int len = MQjsonList.size();
-		if(len==0)return new MQvisit[0];
-		final MQvisit[] mQvisits=new MQvisit[len];
-		int i=0;
-		for (MQvisit j : MQjsonList)	mQvisits[i++]=j;
+		if (len == 0) return new MQvisit[0];
+		final MQvisit[] mQvisits = new MQvisit[len];
+		int i = 0;
+		for (MQvisit j : MQjsonList)
+			mQvisits[i++] = j;
 		return mQvisits;
 	}
+
 	public asmMQAnnotation(final Object obj) {
 		init(obj.getClass());
 	}
@@ -57,16 +62,26 @@ public final class asmMQAnnotation{
 		try {
 			this.classN = classN;
 			this.className = classN.getName();
+			access = MethodAccess.get(classN);
 			ClassReader cr = new ClassReader(this.className);
 			this.identityHashCode = System.identityHashCode(classN);
 			TestVisitorField visitorField = new TestVisitorField();
-			visitorField.setClass(classN);
+			visitorField.classN = classN;
 			cr.accept(visitorField, 0);
 			MQjsonList = visitorField.MQjsonList;
+			for (MQvisit e : MQjsonList)
+				//System.out.println("e.Name:" + e.Name);
+				/* 方法、非static access=public 才能得到 MethodAccessIndex */
+				if (e.type == 1 && !e.isStatic && (e.access & Opcodes.ACC_PUBLIC) == Opcodes.ACC_PUBLIC) e.MethodAccessIndex = access.getIndex(e.Name);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	public final MethodAccess getAccess() {
+		return access;
 	}
 
 	/**
@@ -74,16 +89,11 @@ public final class asmMQAnnotation{
 	 * @author sunjian
 	 */
 	static final class TestVisitorField extends ClassVisitor {
+		transient Class<?> classN = null;
 		final LinkedList<MQvisit> MQjsonList = new LinkedList<MQvisit>();
 
 		public TestVisitorField() {
 			super(Opcodes.ASM4);
-		}
-
-		transient Class<?> classN = null;
-
-		public final void setClass(final Class<?> classN) {
-			this.classN = classN;
 		}
 
 		/**
@@ -106,6 +116,7 @@ public final class asmMQAnnotation{
 							f.returnFTE = FieldTypeEnum.getByASMType(desc.substring(0));
 						}
 						if (Consts.AllowIndexOf(f.returnFTE) == -1) return null;
+						f.access = access;
 						f.type = 0;
 						f.Name = fieldname;
 						/*static 修饰符表示静态对象*/
@@ -121,7 +132,9 @@ public final class asmMQAnnotation{
 
 						} else {
 							try {
-								f.offSet = Constants.UNSAFE.objectFieldOffset(classN.getDeclaredField(fieldname));
+								final Field field = classN.getDeclaredField(fieldname);
+								f.offSet = Constants.UNSAFE.objectFieldOffset(field);
+								//f.staticObject = Constants.UNSAFE.(field);
 							} catch (NoSuchFieldException e) {
 								e.printStackTrace();
 							}
@@ -129,12 +142,12 @@ public final class asmMQAnnotation{
 
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(final String name, final Object value) {
-								if (UNSAFEcommon.equals(name, Consts.MQJsonAnnotationTitle)) {
-									f.MQAnnotationTitle = (String) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationM) {
+									f.MQAnnotationM = (String) value;
 									return;
 								}
-								if (UNSAFEcommon.equals(name, Consts.MQJsonAnnotationGroup)) {
-									f.MQAnnotationGroup = (int[]) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationQ) {
+									f.MQAnnotationQ = (int[]) value;
 									return;
 								}
 							}
@@ -161,6 +174,7 @@ public final class asmMQAnnotation{
 						final MQvisit f = new MQvisit();
 						f.returnFTE = FieldTypeEnum.getByASMType(desc.substring((f.returnIsArray = ((desc.charAt(2) == '[') ? true : false)) ? 3 : 2));
 						if (Consts.AllowIndexOf(f.returnFTE) == -1) return null;
+						f.access = access;
 						f.type = 1;
 						f.Name = methodname;
 						/*static 修饰符表示静态对象*/
@@ -169,12 +183,12 @@ public final class asmMQAnnotation{
 						}
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(String name, Object value) {
-								if (UNSAFEcommon.equals(name, Consts.MQJsonAnnotationTitle)) {
-									f.MQAnnotationTitle = (String) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationM) {
+									f.MQAnnotationM = (String) value;
 									return;
 								}
-								if (UNSAFEcommon.equals(name, Consts.MQJsonAnnotationGroup)) {
-									f.MQAnnotationGroup = (int[]) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationQ) {
+									f.MQAnnotationQ = (int[]) value;
 									return;
 								}
 							}
@@ -201,6 +215,10 @@ public final class asmMQAnnotation{
 
 	public static final class MQvisit {
 		/**
+		 * ASM的属性或方法的 修饰符
+		 */
+		int access = 0;
+		/**
 		 * 类型：<br/>
 		 * 0来源于属性<br/>
 		 * 1来源于方法<br/>
@@ -213,11 +231,11 @@ public final class asmMQAnnotation{
 		/**
 		 * MQjson注解中的title String
 		 */
-		String MQAnnotationTitle = null;
+		String MQAnnotationM = null;
 		/**
 		 * MQjson注解中的group int[]
 		 */
-		int[] MQAnnotationGroup = { 0 };
+		int[] MQAnnotationQ = { 0 };
 		/**
 		 * 返回类型
 		 */
@@ -242,6 +260,10 @@ public final class asmMQAnnotation{
 		 * 属性的偏移量
 		 */
 		transient long offSet = 0L;
+		/**
+		 * MethodAccessIndex ReflectASM 方法和字段的索引
+		 */
+		transient int MethodAccessIndex = -1;
 
 		public MQvisit() {
 
@@ -249,27 +271,84 @@ public final class asmMQAnnotation{
 
 		@Override
 		public String toString() {
-			StringBuilder builder = new StringBuilder(250);
-			builder.append("\tMQvisit [type=");
+			StringBuilder builder = new StringBuilder();
+			builder.append("MQvisit [access=");
+			builder.append(access);
+			builder.append(", type=");
 			builder.append(type);
-			builder.append(", \tName=");
+			builder.append(", Name=");
 			builder.append(Name);
-			builder.append(", \tMQAnnotationTitle=");
-			builder.append(MQAnnotationTitle);
-			builder.append(", \tMQAnnotationGroup=");
-			builder.append(Arrays.toString(MQAnnotationGroup));
-			builder.append(", \treturnFTE=");
+			builder.append(", MQAnnotationM=");
+			builder.append(MQAnnotationM);
+			builder.append(", MQAnnotationQ=");
+			builder.append(Arrays.toString(MQAnnotationQ));
+			builder.append(", returnFTE=");
 			builder.append(returnFTE);
-			builder.append(", \treturnIsArray=");
+			builder.append(", returnIsArray=");
 			builder.append(returnIsArray);
-			builder.append(", \tisStatic=");
+			builder.append(", isStatic=");
 			builder.append(isStatic);
-			builder.append(", \tstaticObject=");
+			builder.append(", staticObject=");
 			builder.append(staticObject);
-			builder.append(", \toffSet=");
+			builder.append(", offSet=");
 			builder.append(offSet);
+			builder.append(", MethodAccessIndex=");
+			builder.append(MethodAccessIndex);
 			builder.append("]");
 			return builder.toString();
+		}
+
+		public final int getAccess() {
+			return access;
+		}
+
+		public final int getType() {
+			return type;
+		}
+
+		public final String getName() {
+			return Name;
+		}
+
+		public final String getMQAnnotationM() {
+			return MQAnnotationM;
+		}
+
+		/**
+		 * 得到真正的json的Title，如果未用注解指定Title，则直接用属性名或方法名
+		 * @return String
+		 */
+		public final String getRealName() {
+			if (MQAnnotationM == null || MQAnnotationM.length() == 0) return Name;
+			return MQAnnotationM;
+		}
+
+		public final int[] getMQAnnotationQ() {
+			return MQAnnotationQ;
+		}
+
+		public final FieldTypeEnum getReturnFTE() {
+			return returnFTE;
+		}
+
+		public final boolean isReturnIsArray() {
+			return returnIsArray;
+		}
+
+		public final boolean isStatic() {
+			return isStatic;
+		}
+
+		public final Object getStaticObject() {
+			return staticObject;
+		}
+
+		public final long getOffSet() {
+			return offSet;
+		}
+
+		public final int getMethodAccessIndex() {
+			return MethodAccessIndex;
 		}
 
 	}

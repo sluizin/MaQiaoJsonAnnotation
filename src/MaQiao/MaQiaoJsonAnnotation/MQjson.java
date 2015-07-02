@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Target({ FIELD, METHOD })
 @Documented
 public @interface MQjson {
-	String Title() default "";
+	String M() default "";
 
-	int[] Groups() default { 0 };
+	int[] Q() default { 0 };
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.esotericsoftware.reflectasm.MethodAccess;
+
 import MaQiao.Constants.Constants;
 import MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation.MQvisit;
 import sun.misc.Unsafe;
@@ -19,7 +21,7 @@ import static MaQiao.MaQiaoJsonAnnotation.Consts.booleanType;
 public final class MQJsonAnnotationCache {
 	private static final Unsafe UNSAFE = Constants.UNSAFE;
 	private transient volatile int locked = booleanType.False.index;
-	transient volatile ArrayList<Bean> beanList = new ArrayList<Bean>();
+	transient volatile ArrayList<AnnoBean> beanList = new ArrayList<AnnoBean>();
 
 	public MQJsonAnnotationCache() {
 	}
@@ -28,11 +30,11 @@ public final class MQJsonAnnotationCache {
 		get(obj.getClass());
 	}
 
-	public final Bean get(final Object obj) {
+	public final AnnoBean get(final Object obj) {
 		return get(obj.getClass());
 	}
 
-	public final Bean get(final Class<?> classzz) {
+	public final AnnoBean get(final Class<?> classzz) {
 		lock();
 		try {
 			int find;
@@ -62,9 +64,15 @@ public final class MQJsonAnnotationCache {
 	private final void add(final Class<?> classzz) {
 		for (int i = 0, identityHashCode = System.identityHashCode(classzz); i < beanList.size(); i++)
 			if (beanList.get(i).classzz.equals(classzz) && beanList.get(i).identityHashCode != identityHashCode) beanList.remove(i--);
-		final Bean e = new Bean(classzz);
+		final AnnoBean e = new AnnoBean(classzz);
 		//e.MQvisitLinkedLists = (new asmMQAnnotation(classzz)).getMQjsonLinkedList();
 		e.MQvisits = (new asmMQAnnotation(classzz)).getMQjsonArray();
+		for(int i=0,len=e.MQvisits.length;i<len;i++){
+			if(e.MQvisits[i].type==1){
+				e.access = MethodAccess.get(classzz);
+				break;
+			}
+		}
 		beanList.add(e);
 
 	}
@@ -101,10 +109,11 @@ public final class MQJsonAnnotationCache {
 		return "MQBeanFieldsOffset [beanList=" + beanList + "]";
 	}
 
-	public final class Bean {
+	public static final class AnnoBean {
 		transient int identityHashCode = 0;
 		transient Class<?> classzz = null;
 		transient String className = null;
+		transient MethodAccess access = null;
 		/**
 		 * 复杂Class类
 		 */
@@ -127,22 +136,51 @@ public final class MQJsonAnnotationCache {
 			return Complex;
 		}
 
-		public final MQvisit[] getFieldsOffsets() {
+		public final MQvisit[] getMQvisits() {
 			return MQvisits;
 		}
 
-		public Bean() {
+		public final MethodAccess getAccess() {
+			return access;
+		}
+
+		public AnnoBean() {
 
 		}
 
-		public Bean(final Class<?> classzz) {
+		public AnnoBean(final Class<?> classzz) {
 			this.identityHashCode = System.identityHashCode(classzz);
 			this.classzz = classzz;
 			this.className = classzz.getName();
 		}
 
 		@Override
-		public final String toString() {
+		public String toString() {
+			System.out.println("----------------------------属性 [" + className + "]------------------------------");
+			for (int i = 0; i < MQvisits.length; i++) {
+				System.out.println(MQvisits[i].toString());
+				//if(fieldsOffsets[i].isStatic)System.out.println("----------------------------------------------------------");
+			}
+			System.out.println("---------------------------------------------------------------------------");
+			StringBuilder builder = new StringBuilder();
+			builder.append("Bean [identityHashCode=");
+			builder.append(identityHashCode);
+			builder.append(", classzz=");
+			builder.append(classzz);
+			builder.append(", className=");
+			builder.append(className);
+			builder.append(", access=");
+			builder.append(access);
+			builder.append(", Complex=");
+			builder.append(Complex);
+			builder.append(", MQvisits=");
+			builder.append(Arrays.toString(MQvisits));
+			builder.append("]");
+			return builder.toString();
+		}
+
+		//	@Override
+		public final String dealToString() {
 			System.out.println("----------------------------属性 [" + className + "]------------------------------");
 			for (int i = 0; i < MQvisits.length; i++) {
 				System.out.println(MQvisits[i].toString());

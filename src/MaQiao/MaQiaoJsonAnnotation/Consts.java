@@ -13,10 +13,12 @@ public final class Consts {
 	 * ASM解析class时得到的注解 "LMaQiao/MaQiaoAnnotationToJson/MQjson;"
 	 */
 	static final String MQJsonASMAnnotation = "LMaQiao/MaQiaoJsonAnnotation/MQjson;";
-	static final char[] MQJsonAnnotationTitle = { 'T', 'i', 't', 'l', 'e' };
+	//static final char[] MQJsonAnnotationTitle = { 'T', 'i', 't', 'l', 'e' };
 	//static final String MQJsonAnnotationTitle = "title";
-	static final char[] MQJsonAnnotationGroup = { 'G', 'r', 'o', 'u', 'p', 's' };
+	static final char MQJsonAnnotationM = 'M';
+	//static final char[] MQJsonAnnotationGroup = { 'G', 'r', 'o', 'u', 'p', 's' };
 	//static final String MQJsonAnnotationGroup = "group";
+	static final char MQJsonAnnotationQ =  'Q';
 	public static final FieldTypeEnum[] AllowFTE = { FieldTypeEnum.Boolean, FieldTypeEnum.BooleanObject, FieldTypeEnum.Byte, FieldTypeEnum.ByteObject, FieldTypeEnum.Char, FieldTypeEnum.Double,
 			FieldTypeEnum.DoubleObject, FieldTypeEnum.Float, FieldTypeEnum.FloatObject, FieldTypeEnum.Int, FieldTypeEnum.Integer, FieldTypeEnum.Long, FieldTypeEnum.LongObject, FieldTypeEnum.Short,
 			FieldTypeEnum.ShortObject, FieldTypeEnum.String, FieldTypeEnum.Timestamp };

@@ -80,6 +80,10 @@ public final class Constants {
 		 */
 		Char(new FieldType("java.lang.Character", "C", 1, null, "char", java.lang.Character.class, Unsafe.ARRAY_CHAR_INDEX_SCALE, true)),
 		/**
+		 * Character
+		 */
+		Character(new FieldType("java.lang.Character", "Ljava/lang/Character;", 1, null, "java.lang.Character", java.lang.Character.class, Unsafe.ARRAY_CHAR_INDEX_SCALE, true)),
+		/**
 		 * Int
 		 */
 		Int(new FieldType("java.lang.Integer", "I", 0, 0, "int", java.lang.Integer.class, Unsafe.ARRAY_INT_INDEX_SCALE, true)),
@@ -320,6 +324,30 @@ public final class Constants {
 		case Object:
 			break;
 		}*/
+	public static final Object getUNSAFEObject(final Object obj, final long offSet, final FieldTypeEnum fte,final boolean isArray) {
+		if (fte == null) return UNSAFE.getObject(obj, offSet);
+		if(isArray) return UNSAFE.getObject(obj, offSet);
+		switch (fte) {
+		case Char:
+			return UNSAFE.getChar(obj, offSet);
+		case Int:
+			return UNSAFE.getInt(obj, offSet);
+		case Boolean:
+			return UNSAFE.getBoolean(obj, offSet);
+		case Float:
+			return UNSAFE.getFloat(obj, offSet);
+		case Long:
+			return UNSAFE.getLong(obj, offSet);
+		case Double:
+			return UNSAFE.getDouble(obj, offSet);
+		case Byte:
+			return UNSAFE.getByte(obj, offSet);
+		case Short:
+			return UNSAFE.getShort(obj, offSet);
+		default:
+			return UNSAFE.getObject(obj, offSet);
+		}
+	}
 	/**
 	 * 通过unsafe得到对象偏移位置的对象，类型已经通过FieldTypeEnum确认<br/>
 	 * 在获取identity时，注意：Short,Float,Long,Double对象，需要提取值，则不是地址<br/>
