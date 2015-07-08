@@ -20,7 +20,7 @@ import static MaQiao.MaQiaoJsonAnnotation.Consts.booleanType;
 @SuppressWarnings("unused")
 public final class MQJsonAnnotationCache {
 	private static final Unsafe UNSAFE = Constants.UNSAFE;
-	private transient volatile int locked = booleanType.False.index;
+	private transient int locked = booleanType.False.index;
 	transient volatile ArrayList<AnnoBean> beanList = new ArrayList<AnnoBean>();
 
 	public MQJsonAnnotationCache() {
