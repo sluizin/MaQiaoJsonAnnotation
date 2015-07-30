@@ -9,38 +9,47 @@ import MaQiao.MaQiaoJsonAnnotation.MQjson;
 
 @SuppressWarnings("unused")
 public final class user {
+	@MQjson(v = { 9 })
+	int[] ccdd=new int[]{1,2,3};
 	@MQjson
 	String name = "sunjian";
 
-	@MQjson(Q = { 1, 2, 4 })
+	@MQjson(v = { 1, 2, 4 })
 	private final int year = 20;
 
 	int Mathematics = 80;
 
 	@MQjson
 	transient int month = 11;
-
+	@MQjson(k="static",v={0,1})
+	static int kyk=100;
 	@MQjson
 	char[] charsplit = { 'X', 'Y', 'Z' };
+	@MQjson
+	Character[] charsplita={new Character('a'), new Character('b')};
 
 	@MQjson
 	static char[] charsplitk = { 'X', 'Y', 'Z' };
-
+	
 	int language = 75;
 
-	@MQjson(M = "Workday", Q = { 1, 2, 6 })
+	@MQjson(k = "Workday", v = { 1, 2, 6 })
 	int workday = 30;
+	
 
-	@MQjson(M = "ListString", Q = { 1, 2 })
+	@MQjson(k = "ListString", v = { 1, 2 })
 	public List<String> c = new ArrayList<String>();
 
 	private final Map<String, String> cd = new HashMap<String, String>();
 
 	private int cc = 100;
 
-	@MQjson(M = "BigName", Q = { 1, 3, 5 })
+	@MQjson(k = "BigName", v = { 1, 3, 5 })
 	private char[] chark = { 'a', 'c', 'e' };
 
+	public final String getNamea(){
+		return "MR "+this.name+"..";
+	}
 	public String getBigName() {
 		return "Mr " + name;
 	}
@@ -49,22 +58,22 @@ public final class user {
 		return "AA";
 	}
 
-	@MQjson(M = "ScoreSort", Q = { 1, 3, 7 })
+	@MQjson(k = "ScoreSort", v = {0, 1, 3, 7 })
 	public final int getScoreSort() {
-		return Mathematics + language;
+		return (Mathematics + language)*1000;
 	}
 
-	@MQjson(M = "ScoreAverage", Q = { 2, 4, 7 })
+	@MQjson(k = "ScoreAverage", v = { 2, 4, 7 })
 	public int getScoreAverage() {
 		return (Mathematics + language) / 2;
 	}
 
-	@MQjson(M = "getNameMethod", Q = { 2, 3, 7 })
+	@MQjson(k = "getNameMethod", v = {0, 2, 3, 7 })
 	public final String getName() {
-		return name;
+		return "MR "+this.name;
 	}
 
-	@MQjson(M = "getcharnew", Q = { 2, 6, 7 })
+	@MQjson(k = "getcharnew", v = {0, 2, 6, 7 })
 	public final char[] getchar() {
 		char[] c = { 'a', 'c' };
 		return c;
@@ -78,7 +87,7 @@ public final class user {
 		return year;
 	}
 
-	@MQjson(M = "setYearMethod", Q = { 5, 6, 7 })
+	@MQjson(k = "setYearMethod", v = { 5, 6, 7 })
 	public final void setYear(final int year, final int cc, final int[] k, final String[] kc) {
 		//this.year = year;
 	}
@@ -91,20 +100,20 @@ public final class user {
 		this.Mathematics = mathematics;
 	}
 
-	@MQjson(M = "getLanguageNew", Q = { 1, 2 })
+	@MQjson(k = "getLanguageNew", v = { 1, 2 },t="静态化方法")
 	public final static int getLanguage() {
 		return 1001;
 	}
 
-	@MQjson(M = "getLanguageNew3", Q = { 1, 3 })
-	public final String getLanguage3() {
+	@MQjson(k = "getLanguageNew3", v = { 1, 3 })
+	public final  String getLanguage3() {
 		return "1002";
 	}
 	public final void setLanguage(final int language) {
 		this.language = language;
 	}
 
-	@MQjson(M = "getChark", Q = { 2, 4, 7 })
+	@MQjson(k = "getChark", v = { 2, 4, 7 })
 	public final char[] getChark() {
 		return chark;
 	}

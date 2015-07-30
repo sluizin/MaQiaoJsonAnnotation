@@ -142,12 +142,12 @@ public final class asmMQAnnotation {
 
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(final String name, final Object value) {
-								if (name.charAt(0) == Consts.MQJsonAnnotationM) {
-									f.MQAnnotationM = (String) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationKey) {
+									f.MQAnnotationKey = (String) value;
 									return;
 								}
-								if (name.charAt(0) == Consts.MQJsonAnnotationQ) {
-									f.MQAnnotationQ = (int[]) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationValues) {
+									f.MQAnnotationValues = (int[]) value;
 									return;
 								}
 							}
@@ -183,12 +183,12 @@ public final class asmMQAnnotation {
 						}
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(String name, Object value) {
-								if (name.charAt(0) == Consts.MQJsonAnnotationM) {
-									f.MQAnnotationM = (String) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationKey) {
+									f.MQAnnotationKey = (String) value;
 									return;
 								}
-								if (name.charAt(0) == Consts.MQJsonAnnotationQ) {
-									f.MQAnnotationQ = (int[]) value;
+								if (name.charAt(0) == Consts.MQJsonAnnotationValues) {
+									f.MQAnnotationValues = (int[]) value;
 									return;
 								}
 							}
@@ -231,11 +231,11 @@ public final class asmMQAnnotation {
 		/**
 		 * MQjson注解中的title String
 		 */
-		String MQAnnotationM = null;
+		String MQAnnotationKey = null;
 		/**
 		 * MQjson注解中的group int[]
 		 */
-		int[] MQAnnotationQ = { 0 };
+		int[] MQAnnotationValues = { 0 };
 		/**
 		 * 返回类型
 		 */
@@ -278,10 +278,10 @@ public final class asmMQAnnotation {
 			builder.append(type);
 			builder.append(", Name=");
 			builder.append(Name);
-			builder.append(", MQAnnotationM=");
-			builder.append(MQAnnotationM);
-			builder.append(", MQAnnotationQ=");
-			builder.append(Arrays.toString(MQAnnotationQ));
+			builder.append(", MQAnnotationKey=");
+			builder.append(MQAnnotationKey);
+			builder.append(", MQAnnotationValues=");
+			builder.append(Arrays.toString(MQAnnotationValues));
 			builder.append(", returnFTE=");
 			builder.append(returnFTE);
 			builder.append(", returnIsArray=");
@@ -311,7 +311,7 @@ public final class asmMQAnnotation {
 		}
 
 		public final String getMQAnnotationM() {
-			return MQAnnotationM;
+			return MQAnnotationKey;
 		}
 
 		/**
@@ -319,12 +319,12 @@ public final class asmMQAnnotation {
 		 * @return String
 		 */
 		public final String getRealName() {
-			if (MQAnnotationM == null || MQAnnotationM.length() == 0) return Name;
-			return MQAnnotationM;
+			if (MQAnnotationKey == null || MQAnnotationKey.length() == 0) return Name;
+			return MQAnnotationKey;
 		}
 
 		public final int[] getMQAnnotationQ() {
-			return MQAnnotationQ;
+			return MQAnnotationValues;
 		}
 
 		public final FieldTypeEnum getReturnFTE() {

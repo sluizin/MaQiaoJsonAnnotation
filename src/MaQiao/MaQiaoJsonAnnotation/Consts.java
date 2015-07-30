@@ -15,11 +15,11 @@ public final class Consts {
 	static final String MQJsonASMAnnotation = "LMaQiao/MaQiaoJsonAnnotation/MQjson;";
 	//static final char[] MQJsonAnnotationTitle = { 'T', 'i', 't', 'l', 'e' };
 	//static final String MQJsonAnnotationTitle = "title";
-	static final char MQJsonAnnotationM = 'M';
+	static final char MQJsonAnnotationKey = 'k';
 	//static final char[] MQJsonAnnotationGroup = { 'G', 'r', 'o', 'u', 'p', 's' };
 	//static final String MQJsonAnnotationGroup = "group";
-	static final char MQJsonAnnotationQ =  'Q';
-	public static final FieldTypeEnum[] AllowFTE = { FieldTypeEnum.Boolean, FieldTypeEnum.BooleanObject, FieldTypeEnum.Byte, FieldTypeEnum.ByteObject, FieldTypeEnum.Char, FieldTypeEnum.Double,
+	static final char MQJsonAnnotationValues =  'v';
+	public static final FieldTypeEnum[] AllowFTE = { FieldTypeEnum.Boolean, FieldTypeEnum.BooleanObject, FieldTypeEnum.Byte, FieldTypeEnum.ByteObject, FieldTypeEnum.Char, FieldTypeEnum.Character, FieldTypeEnum.Double,
 			FieldTypeEnum.DoubleObject, FieldTypeEnum.Float, FieldTypeEnum.FloatObject, FieldTypeEnum.Int, FieldTypeEnum.Integer, FieldTypeEnum.Long, FieldTypeEnum.LongObject, FieldTypeEnum.Short,
 			FieldTypeEnum.ShortObject, FieldTypeEnum.String, FieldTypeEnum.Timestamp };
 
@@ -72,13 +72,13 @@ public final class Consts {
 		 * 得到枚举中的int index值
 		 * @return int
 		 */
-		public final int getIndex(){
-			return index;
-		}
-		public static final booleanType getBooleanType(final int index) {
-			for (booleanType c : booleanType.values())
-				if (c.index == index) return c;
-			return null;
-		}
+//		public final int getIndex(){
+//			return index;
+//		}
+//		public static final booleanType getBooleanType(final int index) {
+//			for (booleanType c : booleanType.values())
+//				if (c.index == index) return c;
+//			return null;
+//		}
 	}	
 }
