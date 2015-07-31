@@ -2,17 +2,15 @@ package MaQiao.MaQiaoJsonAnnotation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-
 import com.esotericsoftware.reflectasm.MethodAccess;
-
 import MaQiao.Constants.Constants;
 import MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation.MQvisit;
 import sun.misc.Unsafe;
 import static MaQiao.MaQiaoJsonAnnotation.Consts.booleanType;
 
 /**
- * 通过MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation注解形式缓存 Class对象的各属性 类型 偏移地址记录
+ * 通过MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation注解形式缓存 Class对象的各属性 类型 偏移地址记录<br/>
+ * 线程安全
  * @version 1.1
  * @since 1.7
  * @author Sunjian
@@ -38,12 +36,9 @@ public final class MQJsonAnnotationCache {
 		lock();
 		try {
 			int find;
-			if ((find = indexOf(classzz)) == -1) {
-				add(classzz);
-				if ((find = indexOf(classzz)) != -1) return beanList.get(find);
-			} else {
-				return beanList.get(find);
-			}
+			if ((find = indexOf(classzz)) != -1) return beanList.get(find);
+			add(classzz);
+			if ((find = indexOf(classzz)) != -1) return beanList.get(find);
 			return null;
 		} finally {
 			unLock();
@@ -67,12 +62,14 @@ public final class MQJsonAnnotationCache {
 		final AnnoBean e = new AnnoBean(classzz);
 		//e.MQvisitLinkedLists = (new asmMQAnnotation(classzz)).getMQjsonLinkedList();
 		e.MQvisits = (new asmMQAnnotation(classzz)).getMQjsonArray();
-		for(int i=0,len=e.MQvisits.length;i<len;i++){
-			if(e.MQvisits[i].type==1){
+		for (int i = 0, len = e.MQvisits.length; i < len; i++) {
+			if (e.MQvisits[i].type == 1) {
 				e.access = MethodAccess.get(classzz);
 				break;
 			}
 		}
+		/* 按地址偏移量进行排序 */
+		e.MQvisits=FieldsSort(e.MQvisits);
 		beanList.add(e);
 
 	}
@@ -178,17 +175,6 @@ public final class MQJsonAnnotationCache {
 			builder.append("]");
 			return builder.toString();
 		}
-
-		//	@Override
-		public final String dealToString() {
-			System.out.println("----------------------------属性 [" + className + "]------------------------------");
-			for (int i = 0; i < MQvisits.length; i++) {
-				System.out.println(MQvisits[i].toString());
-				//if(fieldsOffsets[i].isStatic)System.out.println("----------------------------------------------------------");
-			}
-			System.out.println("---------------------------------------------------------------------------");
-			return "Bean [identityHashCode=" + identityHashCode + ", classzz=" + classzz + ", className=" + className + ", Complex=" + Complex + ", MQvisit=" + Arrays.toString(MQvisits) + "]";
-		}
 	}
 
 	/**
@@ -214,7 +200,11 @@ public final class MQJsonAnnotationCache {
 		while (!UNSAFE.compareAndSwapInt(this, Consts.lockedOffset, from.index, to.index)) {
 		}
 	}
-
+	/**
+	 * 对MQvisit数组进行排序(按偏移量进行从小到大)
+	 * @param fieldsOffsets MQvisit[]
+	 * @return MQvisit[]
+	 */
 	private final static MQvisit[] FieldsSort(final MQvisit[] fieldsOffsets) {
 		int len;
 		if ((len = fieldsOffsets.length) <= 1) return fieldsOffsets;

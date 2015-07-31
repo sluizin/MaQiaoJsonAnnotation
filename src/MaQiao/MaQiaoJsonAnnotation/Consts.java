@@ -14,11 +14,12 @@ public final class Consts {
 	 */
 	static final String MQJsonASMAnnotation = "LMaQiao/MaQiaoJsonAnnotation/MQjson;";
 	//static final char[] MQJsonAnnotationTitle = { 'T', 'i', 't', 'l', 'e' };
-	//static final String MQJsonAnnotationTitle = "title";
+	//static final String MQJsonAnnotationTitle = "key";
 	static final char MQJsonAnnotationKey = 'k';
 	//static final char[] MQJsonAnnotationGroup = { 'G', 'r', 'o', 'u', 'p', 's' };
-	//static final String MQJsonAnnotationGroup = "group";
+	//static final String MQJsonAnnotationGroup = "values";
 	static final char MQJsonAnnotationValues =  'v';
+	static final char MQJsonAnnotationText =  't';
 	public static final FieldTypeEnum[] AllowFTE = { FieldTypeEnum.Boolean, FieldTypeEnum.BooleanObject, FieldTypeEnum.Byte, FieldTypeEnum.ByteObject, FieldTypeEnum.Char, FieldTypeEnum.Character, FieldTypeEnum.Double,
 			FieldTypeEnum.DoubleObject, FieldTypeEnum.Float, FieldTypeEnum.FloatObject, FieldTypeEnum.Int, FieldTypeEnum.Integer, FieldTypeEnum.Long, FieldTypeEnum.LongObject, FieldTypeEnum.Short,
 			FieldTypeEnum.ShortObject, FieldTypeEnum.String, FieldTypeEnum.Timestamp };

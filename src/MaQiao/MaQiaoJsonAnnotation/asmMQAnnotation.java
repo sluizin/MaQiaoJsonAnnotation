@@ -90,6 +90,9 @@ public final class asmMQAnnotation {
 	 */
 	static final class TestVisitorField extends ClassVisitor {
 		transient Class<?> classN = null;
+		/**
+		 * 使用链表保存结果集
+		 */
 		final LinkedList<MQvisit> MQjsonList = new LinkedList<MQvisit>();
 
 		public TestVisitorField() {
@@ -139,15 +142,19 @@ public final class asmMQAnnotation {
 								e.printStackTrace();
 							}
 						}
-
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(final String name, final Object value) {
-								if (name.charAt(0) == Consts.MQJsonAnnotationKey) {
+								switch (name.charAt(0)) {
+								case Consts.MQJsonAnnotationKey:
 									f.MQAnnotationKey = (String) value;
 									return;
-								}
-								if (name.charAt(0) == Consts.MQJsonAnnotationValues) {
+								case Consts.MQJsonAnnotationValues:
 									f.MQAnnotationValues = (int[]) value;
+									return;
+								case Consts.MQJsonAnnotationText:
+									f.MQAnnotationText = (String) value;
+									return;
+								default:
 									return;
 								}
 							}
@@ -183,14 +190,20 @@ public final class asmMQAnnotation {
 						}
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(String name, Object value) {
-								if (name.charAt(0) == Consts.MQJsonAnnotationKey) {
+								switch (name.charAt(0)) {
+								case Consts.MQJsonAnnotationKey:
 									f.MQAnnotationKey = (String) value;
 									return;
-								}
-								if (name.charAt(0) == Consts.MQJsonAnnotationValues) {
+								case Consts.MQJsonAnnotationValues:
 									f.MQAnnotationValues = (int[]) value;
 									return;
+								case Consts.MQJsonAnnotationText:
+									f.MQAnnotationText = (String) value;
+									return;
+								default:
+									return;
 								}
+
 							}
 						};
 						MQjsonList.add(f);
@@ -237,6 +250,10 @@ public final class asmMQAnnotation {
 		 */
 		int[] MQAnnotationValues = { 0 };
 		/**
+		 * 说明性文字
+		 */
+		String MQAnnotationText = "";
+		/**
 		 * 返回类型
 		 */
 		FieldTypeEnum returnFTE = null;
@@ -282,6 +299,8 @@ public final class asmMQAnnotation {
 			builder.append(MQAnnotationKey);
 			builder.append(", MQAnnotationValues=");
 			builder.append(Arrays.toString(MQAnnotationValues));
+			builder.append(", MQAnnotationText=");
+			builder.append(MQAnnotationText);
 			builder.append(", returnFTE=");
 			builder.append(returnFTE);
 			builder.append(", returnIsArray=");
