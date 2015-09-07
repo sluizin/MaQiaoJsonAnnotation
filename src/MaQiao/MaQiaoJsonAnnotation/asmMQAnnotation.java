@@ -33,7 +33,18 @@ public final class asmMQAnnotation {
 	transient String className = null;
 	transient Class<?> classN = null;
 	transient MethodAccess access = null;
+	/**
+	 * 注解链表
+	 */
 	transient LinkedList<MQvisit> MQjsonList = new LinkedList<MQvisit>();
+	/**
+	 * 注解汇总
+	 */
+	transient long annoValuesCollect = 0L;
+
+	public final long getAnnoValuesCollect() {
+		return annoValuesCollect;
+	}
 
 	public final LinkedList<MQvisit> getMQjsonLinkedList() {
 		return MQjsonList;
@@ -48,6 +59,15 @@ public final class asmMQAnnotation {
 		for (MQvisit j : MQjsonList)
 			mQvisits[i++] = j;
 		return mQvisits;
+	}
+
+	/**
+	 * 计算出位数以及位数汇总
+	 */
+	public final void CalculationValuesLongCollect() {
+		this.annoValuesCollect = 0L;
+		for (MQvisit j : MQjsonList)
+			annoValuesCollect |= (j.MQAnnotationValuesLong = Consts.arrayToBitLong(j.MQAnnotationValues));
 	}
 
 	public asmMQAnnotation(final Object obj) {
@@ -69,10 +89,15 @@ public final class asmMQAnnotation {
 			visitorField.classN = classN;
 			cr.accept(visitorField, 0);
 			MQjsonList = visitorField.MQjsonList;
+			this.annoValuesCollect = 0L;
 			for (MQvisit e : MQjsonList)
-				//System.out.println("e.Name:" + e.Name);
-				/* 方法、非static access=public 才能得到 MethodAccessIndex */
+			//System.out.println("e.Name:" + e.Name);
+			/* 方法、非static access=public 才能得到 MethodAccessIndex */
+			{
 				if (e.type == 1 && !e.isStatic && (e.access & Opcodes.ACC_PUBLIC) == Opcodes.ACC_PUBLIC) e.MethodAccessIndex = access.getIndex(e.Name);
+				/* 计算出位数以及位数汇总 */
+				annoValuesCollect |= (e.MQAnnotationValuesLong = Consts.arrayToBitLong(e.MQAnnotationValues));
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -90,6 +115,10 @@ public final class asmMQAnnotation {
 	 */
 	static final class TestVisitorField extends ClassVisitor {
 		transient Class<?> classN = null;
+		/**
+		 * 注解汇总
+		 */
+		transient long annoValuesCollect = 0L;
 		/**
 		 * 使用链表保存结果集
 		 */
@@ -109,7 +138,7 @@ public final class asmMQAnnotation {
 			FieldVisitor fv = new FieldVisitor(Opcodes.ASM4) {
 				@Override
 				public AnnotationVisitor visitAnnotation(String name, boolean b) {
-					//System.out.println("access:"+access+"\tfieldname:"+fieldname);
+					//System.out.println("access:"+access+"\tfieldname:"+fieldname);System.out.println("visitAnnotation:"+value);
 					if (UNSAFEcommon.equals(name, Consts.MQJsonASMAnnotation)) {
 						final MQvisit f = new MQvisit();
 						if (desc.charAt(0) == '[') {
@@ -142,6 +171,7 @@ public final class asmMQAnnotation {
 								e.printStackTrace();
 							}
 						}
+						//if(value==null)	annoValuesCollect |= (f.MQAnnotationValuesLong = Consts.arrayToBitLong(f.MQAnnotationValues = Consts.DefaultIntNull));
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(final String name, final Object value) {
 								switch (name.charAt(0)) {
@@ -159,6 +189,7 @@ public final class asmMQAnnotation {
 								}
 							}
 						};
+						//annoValuesCollect |= (f.MQAnnotationValuesLong = Consts.arrayToBitLong(f.MQAnnotationValues));
 						MQjsonList.add(f);
 						return avs;
 					}
@@ -185,9 +216,7 @@ public final class asmMQAnnotation {
 						f.type = 1;
 						f.Name = methodname;
 						/*static 修饰符表示静态对象*/
-						if ((access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC) {
-							f.isStatic = true;
-						}
+						if ((access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC) f.isStatic = true;
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(String name, Object value) {
 								switch (name.charAt(0)) {
@@ -196,6 +225,7 @@ public final class asmMQAnnotation {
 									return;
 								case Consts.MQJsonAnnotationValues:
 									f.MQAnnotationValues = (int[]) value;
+									//f.setMQAnnotationValues((int[]) value);
 									return;
 								case Consts.MQJsonAnnotationText:
 									f.MQAnnotationText = (String) value;
@@ -206,6 +236,8 @@ public final class asmMQAnnotation {
 
 							}
 						};
+						//f.MQAnnotationValuesLong = Consts.arrayToBitLong(f.MQAnnotationValues);
+						//annoValuesCollect |= (f.MQAnnotationValuesLong = Consts.arrayToBitLong(f.MQAnnotationValues));
 						MQjsonList.add(f);
 						return avs;
 					}
@@ -249,6 +281,10 @@ public final class asmMQAnnotation {
 		 * MQjson注解中的group int[]
 		 */
 		int[] MQAnnotationValues = { 0 };
+		/**
+		 * MQjson注解中的group long
+		 */
+		long MQAnnotationValuesLong = 0L;
 		/**
 		 * 说明性文字
 		 */
@@ -299,6 +335,8 @@ public final class asmMQAnnotation {
 			builder.append(MQAnnotationKey);
 			builder.append(", MQAnnotationValues=");
 			builder.append(Arrays.toString(MQAnnotationValues));
+			builder.append(", MQAnnotationValuesLong=");
+			builder.append(Long.toBinaryString(MQAnnotationValuesLong));
 			builder.append(", MQAnnotationText=");
 			builder.append(MQAnnotationText);
 			builder.append(", returnFTE=");
@@ -340,6 +378,14 @@ public final class asmMQAnnotation {
 		public final String getRealName() {
 			if (MQAnnotationKey == null || MQAnnotationKey.length() == 0) return Name;
 			return MQAnnotationKey;
+		}
+
+		public final void initMQAnnotationValuesLong() {
+			this.MQAnnotationValuesLong = Consts.arrayToBitLong(this.MQAnnotationValues);
+		}
+
+		public final long getMQAnnotationValuesLong() {
+			return MQAnnotationValuesLong;
 		}
 
 		public final int[] getMQAnnotationQ() {

@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
  * FieldTypeEnum.ShortObject, FieldTypeEnum.String, FieldTypeEnum.Timestamp })<br/>
  * 暂不支持static方法与属性，但已保留识别<br/>
  * 自动过滤含 transient 属性的属性 <br/>
+ * Bit方法时，以0-63数值进行分组。<br/>
  * 以下为有效设置方法
  * 
  * <pre>

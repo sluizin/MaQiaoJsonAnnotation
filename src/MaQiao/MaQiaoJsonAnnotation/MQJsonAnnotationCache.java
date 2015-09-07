@@ -61,7 +61,9 @@ public final class MQJsonAnnotationCache {
 			if (beanList.get(i).classzz.equals(classzz) && beanList.get(i).identityHashCode != identityHashCode) beanList.remove(i--);
 		final AnnoBean e = new AnnoBean(classzz);
 		//e.MQvisitLinkedLists = (new asmMQAnnotation(classzz)).getMQjsonLinkedList();
-		e.MQvisits = (new asmMQAnnotation(classzz)).getMQjsonArray();
+		asmMQAnnotation asmM = new asmMQAnnotation(classzz);
+		e.MQvisits = asmM.getMQjsonArray();
+		e.annoValuesCollect = asmM.annoValuesCollect;
 		for (int i = 0, len = e.MQvisits.length; i < len; i++) {
 			if (e.MQvisits[i].type == 1) {
 				e.access = MethodAccess.get(classzz);
@@ -69,8 +71,9 @@ public final class MQJsonAnnotationCache {
 			}
 		}
 		/* 按地址偏移量进行排序 */
-		e.MQvisits=FieldsSort(e.MQvisits);
+		e.MQvisits = FieldsSort(e.MQvisits);
 		beanList.add(e);
+		asmM = null;
 
 	}
 
@@ -115,6 +118,10 @@ public final class MQJsonAnnotationCache {
 		 * 复杂Class类
 		 */
 		transient boolean Complex = false;
+		/**
+		 * 注解汇总
+		 */
+		transient long annoValuesCollect = 0L;
 		transient MQvisit[] MQvisits = new MQvisit[0];
 
 		public final int getIdentityHashCode() {
@@ -143,6 +150,10 @@ public final class MQJsonAnnotationCache {
 
 		public AnnoBean() {
 
+		}
+
+		public final long getAnnoValuesCollect() {
+			return annoValuesCollect;
 		}
 
 		public AnnoBean(final Class<?> classzz) {
@@ -200,6 +211,7 @@ public final class MQJsonAnnotationCache {
 		while (!UNSAFE.compareAndSwapInt(this, Consts.lockedOffset, from.index, to.index)) {
 		}
 	}
+
 	/**
 	 * 对MQvisit数组进行排序(按偏移量进行从小到大)
 	 * @param fieldsOffsets MQvisit[]
