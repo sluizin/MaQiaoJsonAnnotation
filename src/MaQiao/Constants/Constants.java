@@ -19,7 +19,7 @@ import sun.misc.Unsafe;
  * @category 常量池
  */
 public final class Constants {
-	/* java转义字符(不包括\ddd 三位八进制;\udddd 四位十六进制) */
+	/** java转义字符(不包括\ddd 三位八进制;\udddd 四位十六进制) */
 	public static final char[] EscapeCharacter = { '\n', '\t', '\b', '\r', '\f', '\'', '\"', '\\' };
 	/** Json 非""字符串 之外所有转义字符 */
 	public static final char[] JsonEscapeCharacter = { ' ', '\n', '\t', '\b', '\r', '\f', '\\' };
@@ -170,14 +170,14 @@ public final class Constants {
 		/**
 		 * String point
 		 */
-		private FieldType point;
+		private FieldType value;
 
 		/**
 		 * 初始化
-		 * @param point FieldType
+		 * @param value FieldType
 		 */
-		FieldTypeEnum(final FieldType point) {
-			this.point = point;
+		FieldTypeEnum(final FieldType value) {
+			this.value = value;
 		}
 
 		FieldTypeEnum() {
@@ -186,8 +186,8 @@ public final class Constants {
 		/**
 		 * @return FieldType
 		 */
-		public final FieldType point() {
-			return point;
+		public final FieldType value() {
+			return value;
 		}
 
 		/**
@@ -206,7 +206,7 @@ public final class Constants {
 		 */
 		public static final FieldTypeEnum getByRs(final String JavaRsType) {
 			for (FieldTypeEnum c : FieldTypeEnum.values())
-				if (c.point().getJavaRsType().equals(JavaRsType)) return c;
+				if (c.value().getJavaRsType().equals(JavaRsType)) return c;
 			//assert false : "(Don't Find FieldTypeEnum from Constants.FieldTypeEnum)JavaRsType -- Error:" + JavaRsType;
 			return null;
 		}
@@ -218,7 +218,7 @@ public final class Constants {
 		 */
 		public static final FieldTypeEnum getByASMType(final String ASMType) {
 			for (FieldTypeEnum c : FieldTypeEnum.values())
-				if (c.point().getASMType().equals(ASMType)) return c;
+				if (c.value().getASMType().equals(ASMType)) return c;
 			return null;
 		}
 
@@ -238,7 +238,7 @@ public final class Constants {
 			if (ASMType.indexOf('.') > 0) ASMType = ASMType.replace('.', '/');
 			//System.out.println("ASMType(after):"+ASMType);
 			for (FieldTypeEnum c : FieldTypeEnum.values())
-				if (c.point().getASMType().equals(ASMType)) return c;
+				if (c.value().getASMType().equals(ASMType)) return c;
 			return null;
 		}
 
@@ -249,7 +249,7 @@ public final class Constants {
 		 */
 		public static final FieldTypeEnum getByReflectFields(final String ReflectFields) {
 			for (FieldTypeEnum c : FieldTypeEnum.values())
-				if (c.point().getReflectFields().equals(ReflectFields)) return c;
+				if (c.value().getReflectFields().equals(ReflectFields)) return c;
 			return null;
 		}
 
@@ -260,7 +260,7 @@ public final class Constants {
 		 */
 		public static final FieldTypeEnum getByFieldsClass(final Class<?> FieldsClass) {
 			for (FieldTypeEnum c : FieldTypeEnum.values())
-				if (c.point().getFieldsClass() == FieldsClass) return c;
+				if (c.value().getFieldsClass() == FieldsClass) return c;
 			return null;
 		}
 
@@ -273,7 +273,7 @@ public final class Constants {
 		 */
 		public static final FieldTypeEnum getByFuzzyString(final String FuzzyString) {
 			for (FieldTypeEnum c : FieldTypeEnum.values())
-				if (c.point().getReflectFields().equals(FuzzyString) || c.point().getClass().getName().equals(FuzzyString)) return c;
+				if (c.value().getReflectFields().equals(FuzzyString) || c.value().getClass().getName().equals(FuzzyString)) return c;
 			return null;
 		}
 	}
@@ -392,7 +392,7 @@ public final class Constants {
 		int identityHashCode = 0;
 		if (!((field.getModifiers() & java.lang.reflect.Modifier.STATIC) == java.lang.reflect.Modifier.STATIC)) {
 			FieldTypeEnum fte = null;
-			if ((fte = FieldTypeEnum.getByField(field)) != null && fte.point.isUNSAFEget()) return getUNSAFEObjectidentityHashCode(obj, UNSAFE.objectFieldOffset(field), fte);
+			if ((fte = FieldTypeEnum.getByField(field)) != null && fte.value.isUNSAFEget()) return getUNSAFEObjectidentityHashCode(obj, UNSAFE.objectFieldOffset(field), fte);
 			try {
 				/*public变量，直接提出值*/
 				if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == java.lang.reflect.Modifier.PUBLIC) return System.identityHashCode(field.get(obj));

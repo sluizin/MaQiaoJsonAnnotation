@@ -1,12 +1,10 @@
-package MaQiao.MaQiaoJsonAnnotation;
+package MaQiao.MaQiaoJson.Annotation;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.LinkedList;
-
 import static MaQiao.Constants.Constants.FieldTypeEnum;
-
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -17,15 +15,16 @@ import org.objectweb.asm.Opcodes;
 import com.esotericsoftware.reflectasm.MethodAccess;
 
 import MaQiao.Constants.Constants;
-import MaQiao.Constants.UNSAFEcommon;
-//import org.objectweb.asm.tree.AnnotationNode;
-//import org.objectweb.asm.tree.ClassNode;
-//import org.objectweb.asm.tree.FieldNode;
-//import org.objectweb.asm.tree.MethodNode;
+
+/*import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;*/
 
 /**
  * 通过asm检索类，并得到我需要的注解的属性与方法，并得到方法的返回类型，以及是否有参数 ASM-4.2
  * @serial 1.7
+ * @version 1.1
  * @author Sunjian
  */
 public final class asmMQAnnotation {
@@ -46,7 +45,7 @@ public final class asmMQAnnotation {
 		return annoValuesCollect;
 	}
 
-	public final LinkedList<MQvisit> getMQjsonLinkedList() {
+	final LinkedList<MQvisit> getMQjsonLinkedList() {
 		return MQjsonList;
 	}
 
@@ -64,17 +63,17 @@ public final class asmMQAnnotation {
 	/**
 	 * 计算出位数以及位数汇总
 	 */
-	public final void CalculationValuesLongCollect() {
+	final void CalculationValuesLongCollect() {
 		this.annoValuesCollect = 0L;
 		for (MQvisit j : MQjsonList)
-			annoValuesCollect |= (j.MQAnnotationValuesLong = Consts.arrayToBitLong(j.MQAnnotationValues));
+			annoValuesCollect |= (j.MQAnnotationValuesLong = util.arrayToBitLong(j.MQAnnotationValues));
 	}
 
 	public asmMQAnnotation(final Object obj) {
 		init(obj.getClass());
 	}
 
-	public asmMQAnnotation(final Class<?> classN) {
+	asmMQAnnotation(final Class<?> classN) {
 		init(classN);
 	}
 
@@ -96,7 +95,7 @@ public final class asmMQAnnotation {
 			{
 				if (e.type == 1 && !e.isStatic && (e.access & Opcodes.ACC_PUBLIC) == Opcodes.ACC_PUBLIC) e.MethodAccessIndex = access.getIndex(e.Name);
 				/* 计算出位数以及位数汇总 */
-				annoValuesCollect |= (e.MQAnnotationValuesLong = Consts.arrayToBitLong(e.MQAnnotationValues));
+				annoValuesCollect |= (e.MQAnnotationValuesLong = util.arrayToBitLong(e.MQAnnotationValues));
 			}
 
 		} catch (IOException e) {
@@ -113,16 +112,12 @@ public final class asmMQAnnotation {
 	 * 对类进行分解
 	 * @author sunjian
 	 */
-	static final class TestVisitorField extends ClassVisitor {
-		transient Class<?> classN = null;
-		/**
-		 * 注解汇总
-		 */
-		transient long annoValuesCollect = 0L;
+	public static final class TestVisitorField extends ClassVisitor {
+		public transient Class<?> classN = null;
 		/**
 		 * 使用链表保存结果集
 		 */
-		final LinkedList<MQvisit> MQjsonList = new LinkedList<MQvisit>();
+		public final LinkedList<MQvisit> MQjsonList = new LinkedList<MQvisit>();
 
 		public TestVisitorField() {
 			super(Opcodes.ASM4);
@@ -139,7 +134,7 @@ public final class asmMQAnnotation {
 				@Override
 				public AnnotationVisitor visitAnnotation(String name, boolean b) {
 					//System.out.println("access:"+access+"\tfieldname:"+fieldname);System.out.println("visitAnnotation:"+value);
-					if (UNSAFEcommon.equals(name, Consts.MQJsonASMAnnotation)) {
+					if (util.equals(name, Consts.MQJsonASMAnnotation)) {
 						final MQvisit f = new MQvisit();
 						if (desc.charAt(0) == '[') {
 							f.returnFTE = FieldTypeEnum.getByASMType(desc.substring(1));
@@ -147,7 +142,7 @@ public final class asmMQAnnotation {
 						} else {
 							f.returnFTE = FieldTypeEnum.getByASMType(desc.substring(0));
 						}
-						if (Consts.AllowIndexOf(f.returnFTE) == -1) return null;
+						if (util.AllowIndexOf(f.returnFTE) == -1) return null;
 						f.access = access;
 						f.type = 0;
 						f.Name = fieldname;
@@ -208,15 +203,31 @@ public final class asmMQAnnotation {
 			MethodVisitor mv = new MethodVisitor(Opcodes.ASM4) {
 				@Override
 				public AnnotationVisitor visitAnnotation(final String name, final boolean b) {
-					if (UNSAFEcommon.equals(name, Consts.MQJsonASMAnnotation)) {
+					if (util.equals(name, Consts.MQJsonASMAnnotation)) {
 						final MQvisit f = new MQvisit();
+						//System.out.println("methodname:"+methodname);
+						//System.out.println("desc:"+desc);
 						f.returnFTE = FieldTypeEnum.getByASMType(desc.substring((f.returnIsArray = ((desc.charAt(2) == '[') ? true : false)) ? 3 : 2));
-						if (Consts.AllowIndexOf(f.returnFTE) == -1) return null;
+						if (util.AllowIndexOf(f.returnFTE) == -1) {
+							if (f.returnFTE == null) System.out.println("未找到的类型");
+							else System.out.println("未允许的类型:" + f.returnFTE.name());
+							return null;
+						}
 						f.access = access;
 						f.type = 1;
 						f.Name = methodname;
 						/*static 修饰符表示静态对象*/
-						if ((access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC) f.isStatic = true;
+						if ((access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC) {
+							f.isStatic = true;
+							/*							try {
+															final Field field = classN.getDeclaredField(f.Name);
+															f.offSet = Constants.UNSAFE.staticFieldOffset(field);
+															f.staticObject = Constants.UNSAFE.staticFieldBase(field);
+														} catch (NoSuchFieldException e) {
+															e.printStackTrace();
+														}*/
+						}
+						//System.out.println("......." + f.Name);
 						AnnotationVisitor avs = new AnnotationVisitor(Opcodes.ASM4) {
 							public void visit(String name, Object value) {
 								switch (name.charAt(0)) {
@@ -324,7 +335,7 @@ public final class asmMQAnnotation {
 
 		@Override
 		public String toString() {
-			StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder(200);
 			builder.append("MQvisit [access=");
 			builder.append(access);
 			builder.append(", type=");
@@ -381,7 +392,7 @@ public final class asmMQAnnotation {
 		}
 
 		public final void initMQAnnotationValuesLong() {
-			this.MQAnnotationValuesLong = Consts.arrayToBitLong(this.MQAnnotationValues);
+			this.MQAnnotationValuesLong = util.arrayToBitLong(this.MQAnnotationValues);
 		}
 
 		public final long getMQAnnotationValuesLong() {

@@ -2,17 +2,17 @@ package MaQiao.Constants;
 
 public final class FieldType {
 	//JDBC RS Type
-	private String JavaRsType = "";
+	private String javaRsType = "";
 	//ASM Type
-	private String ASMType = "";
+	private String asmType = "";
 	//Json中 Value值状态，默认0(直接连接),1:加",2:集合[] 
 	private int jsonType = 0;
 	//ASM DefaultObject
-	private Object ASMDefaultObject = null;
+	private Object asmDefaultObject = null;
 	// Fields Type
-	private String ReflectFields = "";
+	private String reflectFields = "";
 	// Fields ClassType
-	private Class<?> FieldsClass = null;
+	private Class<?> fieldsClass = null;
 	//unsafe 类型元素 ARRAY_INDEX_SCALE偏移量
 	private int ARRAY_INDEX_SCALE = 0;
 	//可以通过unsafe的getXXXX提取
@@ -27,41 +27,41 @@ public final class FieldType {
 
 	/**
 	 * 构造函数
-	 * @param JavaRsType java得到的recordSet数据类型
-	 * @param ASMType ASM数据类型
-	 * @param JsonType Value值状态，默认0(直接连接),1:加",2:集合[]
-	 * @param ASMDefaultObject ASM数据类型初始化
-	 * @param ReflectFields 反射Fields所需要的类型(String)
-	 * @param FieldsClass Fields所需要 Class<?> 类
+	 * @param javaRsType java得到的recordSet数据类型
+	 * @param asmType ASM数据类型
+	 * @param jsonType Value值状态，默认0(直接连接),1:加",2:集合[]
+	 * @param asmDefaultObject ASM数据类型初始化
+	 * @param reflectFields 反射Fields所需要的类型(String)
+	 * @param fieldsClass Fields所需要 Class<?> 类
 	 * @param ARRAY_INDEX_SCALE unsafe 类型元素 数组偏移量
 	 * @param isUNSAFEget 是否可以通过unsafe的getXXXX提取
 	 */
-	public FieldType(final String JavaRsType, final String ASMType, final int JsonType, final Object ASMDefaultObject, final String ReflectFields, final Class<?> FieldsClass,
+	public FieldType(final String javaRsType, final String asmType, final int jsonType, final Object asmDefaultObject, final String reflectFields, final Class<?> fieldsClass,
 			final int ARRAY_INDEX_SCALE, final boolean isUNSAFEget) {
-		this.JavaRsType = JavaRsType;
-		this.ASMType = ASMType;
-		this.jsonType = JsonType;
-		this.ASMDefaultObject = ASMDefaultObject;
-		this.ReflectFields = ReflectFields;
-		this.FieldsClass = FieldsClass;
+		this.javaRsType = javaRsType;
+		this.asmType = asmType;
+		this.jsonType = jsonType;
+		this.asmDefaultObject = asmDefaultObject;
+		this.reflectFields = reflectFields;
+		this.fieldsClass = fieldsClass;
 		this.ARRAY_INDEX_SCALE = ARRAY_INDEX_SCALE;
 		this.isUNSAFEget = isUNSAFEget;
 	}
 
 	public final String getJavaRsType() {
-		return JavaRsType;
+		return javaRsType;
 	}
 
 	public final void setJavaRsType(final String javaRsType) {
-		this.JavaRsType = javaRsType;
+		this.javaRsType = javaRsType;
 	}
 
 	public final String getASMType() {
-		return ASMType;
+		return asmType;
 	}
 
-	public final void setASMType(final String aSMType) {
-		this.ASMType = aSMType;
+	public final void setASMType(final String asmType) {
+		this.asmType = asmType;
 	}
 
 	/**
@@ -77,27 +77,27 @@ public final class FieldType {
 	}
 
 	public final Object getASMDefaultObject() {
-		return ASMDefaultObject;
+		return asmDefaultObject;
 	}
 
-	public final void setASMDefaultObject(final Object aSMDefaultObject) {
-		this.ASMDefaultObject = aSMDefaultObject;
+	public final void setASMDefaultObject(final Object asmDefaultObject) {
+		this.asmDefaultObject = asmDefaultObject;
 	}
 
 	public final String getReflectFields() {
-		return ReflectFields;
+		return reflectFields;
 	}
 
 	public final void setReflectFields(final String reflectFields) {
-		this.ReflectFields = reflectFields;
+		this.reflectFields = reflectFields;
 	}
 
 	public final Class<?> getFieldsClass() {
-		return FieldsClass;
+		return fieldsClass;
 	}
 
 	public final void setFieldsClass(final Class<?> fieldsClass) {
-		this.FieldsClass = fieldsClass;
+		this.fieldsClass = fieldsClass;
 	}
 
 	public final int getARRAY_INDEX_SCALE() {
@@ -121,11 +121,11 @@ public final class FieldType {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ARRAY_INDEX_SCALE;
-		result = prime * result + ((ASMDefaultObject == null) ? 0 : ASMDefaultObject.hashCode());
-		result = prime * result + ((ASMType == null) ? 0 : ASMType.hashCode());
-		result = prime * result + ((FieldsClass == null) ? 0 : FieldsClass.hashCode());
-		result = prime * result + ((JavaRsType == null) ? 0 : JavaRsType.hashCode());
-		result = prime * result + ((ReflectFields == null) ? 0 : ReflectFields.hashCode());
+		result = prime * result + ((asmDefaultObject == null) ? 0 : asmDefaultObject.hashCode());
+		result = prime * result + ((asmType == null) ? 0 : asmType.hashCode());
+		result = prime * result + ((fieldsClass == null) ? 0 : fieldsClass.hashCode());
+		result = prime * result + ((javaRsType == null) ? 0 : javaRsType.hashCode());
+		result = prime * result + ((reflectFields == null) ? 0 : reflectFields.hashCode());
 		result = prime * result + (isUNSAFEget ? 1231 : 1237);
 		result = prime * result + jsonType;
 		return result;
@@ -138,21 +138,21 @@ public final class FieldType {
 		if (!(obj instanceof FieldType)) return false;
 		FieldType other = (FieldType) obj;
 		if (ARRAY_INDEX_SCALE != other.ARRAY_INDEX_SCALE) return false;
-		if (ASMDefaultObject == null) {
-			if (other.ASMDefaultObject != null) return false;
-		} else if (!ASMDefaultObject.equals(other.ASMDefaultObject)) return false;
-		if (ASMType == null) {
-			if (other.ASMType != null) return false;
-		} else if (!ASMType.equals(other.ASMType)) return false;
-		if (FieldsClass == null) {
-			if (other.FieldsClass != null) return false;
-		} else if (!FieldsClass.equals(other.FieldsClass)) return false;
-		if (JavaRsType == null) {
-			if (other.JavaRsType != null) return false;
-		} else if (!JavaRsType.equals(other.JavaRsType)) return false;
-		if (ReflectFields == null) {
-			if (other.ReflectFields != null) return false;
-		} else if (!ReflectFields.equals(other.ReflectFields)) return false;
+		if (asmDefaultObject == null) {
+			if (other.asmDefaultObject != null) return false;
+		} else if (!asmDefaultObject.equals(other.asmDefaultObject)) return false;
+		if (asmType == null) {
+			if (other.asmType != null) return false;
+		} else if (!asmType.equals(other.asmType)) return false;
+		if (fieldsClass == null) {
+			if (other.fieldsClass != null) return false;
+		} else if (!fieldsClass.equals(other.fieldsClass)) return false;
+		if (javaRsType == null) {
+			if (other.javaRsType != null) return false;
+		} else if (!javaRsType.equals(other.javaRsType)) return false;
+		if (reflectFields == null) {
+			if (other.reflectFields != null) return false;
+		} else if (!reflectFields.equals(other.reflectFields)) return false;
 		if (isUNSAFEget != other.isUNSAFEget) return false;
 		if (jsonType != other.jsonType) return false;
 		return true;
@@ -160,8 +160,8 @@ public final class FieldType {
 
 	@Override
 	public String toString() {
-		return "FieldType [JavaRsType=" + JavaRsType + ", ASMType=" + ASMType + ", jsonType=" + jsonType + ", ASMDefaultObject=" + ASMDefaultObject + ", ReflectFields=" + ReflectFields
-				+ ", FieldsClass=" + FieldsClass + ", ARRAY_INDEX_SCALE=" + ARRAY_INDEX_SCALE + ", isUNSAFEget=" + isUNSAFEget + "]";
+		return "FieldType [JavaRsType=" + javaRsType + ", ASMType=" + asmType + ", jsonType=" + jsonType + ", ASMDefaultObject=" + asmDefaultObject + ", ReflectFields=" + reflectFields
+				+ ", FieldsClass=" + fieldsClass + ", ARRAY_INDEX_SCALE=" + ARRAY_INDEX_SCALE + ", isUNSAFEget=" + isUNSAFEget + "]";
 	}
 
 }

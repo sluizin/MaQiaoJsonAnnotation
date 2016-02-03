@@ -1,4 +1,4 @@
-package MaQiao.MaQiaoJsonAnnotation;
+package MaQiao.MaQiaoJson.Annotation;
 
 //import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.ElementType.FIELD;
@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 现只支持有String,char,char[]返回值方法(FieldTypeEnum[] AllowFTE = { FieldTypeEnum.Boolean, FieldTypeEnum.BooleanObject, FieldTypeEnum.Byte, FieldTypeEnum.ByteObject, FieldTypeEnum.Char, FieldTypeEnum.Character,
+ * 现只支持有String,char,char[]返回值方法(FieldTypeEnum[] AllowFTE = { <br/>FieldTypeEnum.Boolean, FieldTypeEnum.BooleanObject, FieldTypeEnum.Byte, FieldTypeEnum.ByteObject, FieldTypeEnum.Char, FieldTypeEnum.Character,
  * FieldTypeEnum.Double, FieldTypeEnum.DoubleObject, FieldTypeEnum.Float, FieldTypeEnum.FloatObject, FieldTypeEnum.Int, FieldTypeEnum.Integer, FieldTypeEnum.Long, FieldTypeEnum.LongObject, FieldTypeEnum.Short,
  * FieldTypeEnum.ShortObject, FieldTypeEnum.String, FieldTypeEnum.Timestamp })<br/>
  * 暂不支持static方法与属性，但已保留识别<br/>
@@ -42,6 +42,8 @@ import java.lang.annotation.Target;
  * 
  * <br/>
  * @category 求Json注解
+ * @since 1.7
+ * @version 1.2
  * @author Sunjian
  */
 @Retention(RetentionPolicy.CLASS)

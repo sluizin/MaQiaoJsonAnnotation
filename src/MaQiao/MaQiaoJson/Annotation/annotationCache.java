@@ -1,12 +1,11 @@
-package MaQiao.MaQiaoJsonAnnotation;
+package MaQiao.MaQiaoJson.Annotation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.esotericsoftware.reflectasm.MethodAccess;
 import MaQiao.Constants.Constants;
-import MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation.MQvisit;
-import sun.misc.Unsafe;
-import static MaQiao.MaQiaoJsonAnnotation.Consts.booleanType;
+import MaQiao.MaQiaoJson.Annotation.asmMQAnnotation.MQvisit;
+import static MaQiao.MaQiaoJson.Annotation.Consts.booleanType;
 
 /**
  * 通过MaQiao.MaQiaoJsonAnnotation.asmMQAnnotation注解形式缓存 Class对象的各属性 类型 偏移地址记录<br/>
@@ -15,16 +14,15 @@ import static MaQiao.MaQiaoJsonAnnotation.Consts.booleanType;
  * @since 1.7
  * @author Sunjian
  */
-@SuppressWarnings("unused")
-public final class MQJsonAnnotationCache {
-	private static final Unsafe UNSAFE = Constants.UNSAFE;
-	private transient int locked = booleanType.False.index;
+public final class annotationCache {
+	@SuppressWarnings("unused")
+	private transient int locked = booleanType.False.value;
 	transient volatile ArrayList<AnnoBean> beanList = new ArrayList<AnnoBean>();
 
-	public MQJsonAnnotationCache() {
+	public annotationCache() {
 	}
 
-	public MQJsonAnnotationCache(final Object obj) {
+	public annotationCache(final Object obj) {
 		get(obj.getClass());
 	}
 
@@ -81,6 +79,7 @@ public final class MQJsonAnnotationCache {
 	 * 在检索Fields时，发现外部对象，则添加这个对象信息
 	 * @param classzz Class
 	 */
+	@SuppressWarnings("unused")
 	private final void insert(final Class<?> classzz) {
 		for (int i = 0, identityHashCode = System.identityHashCode(classzz), len = beanList.size(); i < len; i++)
 			if (beanList.get(i).identityHashCode == identityHashCode) return;
@@ -91,6 +90,7 @@ public final class MQJsonAnnotationCache {
 	 * 在检索Fields时，发现外部对象数组，则添加这个对象信息
 	 * @param classString String
 	 */
+	@SuppressWarnings("unused")
 	private final void insert(String classString) {
 		if (classString == null) return;
 		if (classString.indexOf('/') > 0) classString = classString.replace('/', '.');
@@ -109,6 +109,10 @@ public final class MQJsonAnnotationCache {
 		return "MQBeanFieldsOffset [beanList=" + beanList + "]";
 	}
 
+	/**
+	 * 某类的各属性信息
+	 * @author Sunjian
+	 */
 	public static final class AnnoBean {
 		transient int identityHashCode = 0;
 		transient Class<?> classzz = null;
@@ -208,7 +212,7 @@ public final class MQJsonAnnotationCache {
 	 * @param to booleanType
 	 */
 	private final void lockedOffsetCAS(final booleanType from, final booleanType to) {
-		while (!UNSAFE.compareAndSwapInt(this, Consts.lockedOffset, from.index, to.index)) {
+		while (!Constants.UNSAFE.compareAndSwapInt(this, Consts.lockedOffset, from.value, to.value)) {
 		}
 	}
 
